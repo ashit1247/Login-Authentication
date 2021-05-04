@@ -1,17 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@material-ui/core/AppBar/AppBar";
 import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import withStore from "../../../Components/Unstated/withStore";
 import MainStore from "../../../Store/mainStore";
 import { Button, IconButton, Menu } from "@material-ui/core";
+import Data from './data/data.json';
 // import { Button } from "@material-ui/core";
 import { logoutUser } from "../../../API/services";
 
 
-const Landing = ({ mainStore: { state,init, setActiveContent }, history }) => {
+const Landing = ({ mainStore: { state, init, setActiveContent }, history }) => {
   const classes = useStyles();
 
+  const [list, setList]=useState(false);
+
+  const dataShow=()=>{
+    setList(!list);
+  }
 
   const handleLogout = async () => {
     await logoutUser(state.user);
@@ -39,19 +45,62 @@ const Landing = ({ mainStore: { state,init, setActiveContent }, history }) => {
         </Toolbar>
       </AppBar>
 
-      <div className="container" style={{ marginTop: '100px', marginBottom:'150px', border: '1px solid blue', borderRadius:'5px', padding: '20px' }}>
+      <div className="container" style={{ marginTop: '100px', marginBottom: '150px', border: '1px solid blue', borderRadius: '5px', padding: '20px' }}>
         <h2>Upload your file</h2>
         <p>file size should be less than 30 MB.</p>
-        <form action="/action_page.php">
+        <form>
           <div className="form-group">
             <input type="file" className="form-control-file border" name="file" />
           </div>
-          <button type="submit" className="btn btn-primary">Submit</button>
+          <span style={{display:'inline-block'}}>
+            <button type="submit" className="btn btn-primary">Submit</button>
+          </span>
+          
         </form>
+        <span style={{display:'inline-block',margin:'10px 0'}}>
+            <button type="submit" className="btn btn-primary" onClick={dataShow}>ShowList</button>
+          </span>
+      </div>
+      
+
+      <div className="container">
+        <div id="items" className="my-4" style={{ marginBottom: '300px' }}>
+          <h2>Your Items</h2>
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">Id</th>
+                <th scope="col">User Id</th>
+                <th scope="col">Title</th>
+                <th scope="col">Body</th>
+
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              {
+                list?Data.map((user)=>{
+
+                  return(
+                    <tr>
+                  <td scope="row">{user.id}</td>
+                  <td>{user.userId}</td>
+                  <td>{user.title}</td>
+                  <td>{user.body}</td>
+                </tr>
+                  );
+                  
+                }):null
+              }
+              
+
+
+            </tbody>
+          </table>
+        </div>
       </div>
 
-     
-      <div className="container-fluid" style={{ backgroundColor: 'rgb(32, 32, 32)', color: 'white'}}>
+
+      <div className="container-fluid" style={{ backgroundColor: 'rgb(32, 32, 32)', color: 'white' }}>
         <div className="row">
           <div className="col-sm-3 offset-1" style={{ marginTop: '30px' }}>
             <h3>Recent posts</h3>
@@ -102,7 +151,7 @@ const Landing = ({ mainStore: { state,init, setActiveContent }, history }) => {
           </div>
         </div>
       </div>
-    
+
     </div>
   )
 };
